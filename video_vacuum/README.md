@@ -21,14 +21,14 @@ The <directory> argument specifies the directory to search for video files.
 ## Options
 
 Here's a list of all available options:
-    --input: The location where the video files to process can be found.
-    --output: The location to put the new video files. This defaults to the input folder
-    --limit: The minimum size file to process from the input folder measured in gigabytes.
-    --threads: The number of threads FFMPEG will use
-    --size: How many gigabytes per hour of video at 1080p should the resulting file have. Defaults to 4.
-    --mask: A file mask for finding the filenames to process. should default to handling any mp4, mpg, avi or mkv file
-    --codec: The codec to use.  Defaults to libx264
-    --container: Force output to use this extension
+- --input: The location where the video files to process can be found.
+- --output: The location to put the new video files. This defaults to the input folder
+- --limit: The minimum size file to process from the input folder measured in gigabytes.
+- --threads: The number of threads FFMPEG will use
+- --size: How many gigabytes per hour of video at 1080p should the resulting file have. Defaults to 4.
+- --mask: A file mask for finding the filenames to process. should default to handling any mp4, mpg, avi or mkv file
+- --codec: The codec to use.  Defaults to libx264
+- --container: Force output to use this extension
 
 
 ## Examples
