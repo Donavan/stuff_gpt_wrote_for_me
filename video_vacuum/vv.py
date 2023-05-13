@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 import os
-import subprocess
-import argparse
+import sys
 import glob
-import multiprocessing
-import functools
 import logging
+import argparse
+import functools
+import subprocess
+import multiprocessing
 
+logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def compress_file_handbrake(file_path, output_folder, target_file_size):
     base_name = os.path.basename(file_path)
@@ -20,15 +22,13 @@ def compress_file_handbrake(file_path, output_folder, target_file_size):
         "--output", output_file,
         "--encoder", "x265",
         "--vb", "8000",
-        "--limit-rate", "8000",
-        "--quality", "22",
+        "--quality", "26",
         "--optimize",
-        "--encoder-preset", "medium",
-        "--encoder-tune", "film",
-        "--rate", str(target_file_size) + "k"
+        "--encoder-preset", "medium"
     ]
     try:
         subprocess.check_call(command)
+        #logging.info((' '.join(command)))
         logging.info(f'Successfully compressed: {file_path}')
     except subprocess.CalledProcessError as e:
         logging.error(f'Compression failed for: {file_path}, error: {e}')

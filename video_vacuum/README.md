@@ -2,7 +2,10 @@
 
 Video Vacuum is a Python script that helps you to recompress large video files to save space. It allows you to use either HandBrake or FFmpeg as the compression tool.
 
-It allows you to say "here's a folder, any video files in here that are over X gb run them through handbrake (or ffmpeg) and get them down to Y gb size and save them in this output folder,and do P files in parallel"
+It allows you to say "here's a folder, any video files in here that are over X gb run them through handbrake (or ffmpeg) and get them down to size and save them in this output folder,and do P files in parallel"
+
+
+
 
 ## Usage
 
