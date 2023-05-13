@@ -10,7 +10,7 @@ import multiprocessing
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def compress_file_handbrake(file_path, output_folder, target_file_size):
+def compress_file_handbrake(file_path, output_folder, vb):
     base_name = os.path.basename(file_path)
     if output_folder != os.path.dirname(file_path):
         base_name = os.path.splitext(base_name)[0]
@@ -21,7 +21,7 @@ def compress_file_handbrake(file_path, output_folder, target_file_size):
         "--input", file_path,
         "--output", output_file,
         "--encoder", "x265",
-        "--vb", "8000",
+        "--vb",  str(vb),
         "--quality", "26",
         "--optimize",
         "--encoder-preset", "medium"
@@ -34,7 +34,7 @@ def compress_file_handbrake(file_path, output_folder, target_file_size):
         logging.error(f'Compression failed for: {file_path}, error: {e}')
 
 
-def compress_file_ffmpeg(file_path, output_folder, target_file_size, estimated_bitrate):
+def compress_file_ffmpeg(file_path, output_folder, estimated_bitrate):
     base_name = os.path.basename(file_path)
     if output_folder != os.path.dirname(file_path):
         base_name = os.path.splitext(base_name)[0]
@@ -67,11 +67,11 @@ def compress_file_ffmpeg(file_path, output_folder, target_file_size, estimated_b
         logging.error(f'Compression failed for: {file_path}, error: {e}')
 
 
-def compress_file(file_path, output_folder, target_file_size, tool, estimated_bitrate):
+def compress_file(file_path, output_folder, vb, tool, estimated_bitrate):
     if tool.lower() == 'handbrake':
-        compress_file_handbrake(file_path, output_folder, target_file_size)
+        compress_file_handbrake(file_path, output_folder, vb)
     elif tool.lower() == 'ffmpeg':
-        compress_file_ffmpeg(file_path, output_folder, target_file_size, estimated_bitrate)
+        compress_file_ffmpeg(file_path, output_folder, estimated_bitrate)
 
 
 def process_directory(directory, output_folder, file_size_limit, target_file_size, parallel_files, tool, estimated_bitrate, masks):
@@ -96,8 +96,8 @@ def main():
     parser.add_argument("directory", help="Directory to search for video files")
     parser.add_argument("-o", "--output", help="Output folder for compressed files")
     parser.add_argument("-l", "--limit", type=float, help="File size limit in GB", default=8.0)
-    parser.add_argument("-t", "--target", type=float, help="Target file size in GB", default=8.0)
-    parser.add_argument("-p", "--parallel", type=int, help="Number of parallel files to process", default=8)
+    parser.add_argument("-v", "--vb", type=float, help="Variable bitrate", default=8000)
+    parser.add_argument("-p", "--parallel", type=int, help="Number of parallel files to process", default=1)
     parser.add_argument("-c", "--compressor", help="Compressor tool to use: 'handbrake' or 'ffmpeg'", default='handbrake')
     parser.add_argument("-b", "--bitrate", help="Estimated bitrate for FFmpeg (e.g. 5000k)", default='5000k')
     parser.add_argument("-m", "--mask", nargs='+', help="File masks to match, e.g. *.mkv *.mp4", default=["*.[Mm][Kk][Vv]", "*.[Mm][Pp]4", "*.[Aa][Vv][Ii]", "*.[Mm][Pp][Gg]", "*.[Mm][Pp][Ee][Gg]"])
@@ -111,7 +111,7 @@ def main():
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    process_directory(args.directory, output_folder, args.limit, args.target, args.parallel, args.compressor, args.bitrate, args.mask)
+    process_directory(args.directory, output_folder, args.limit, args.vb, args.parallel, args.compressor, args.bitrate, args.mask)
 
 if __name__ == "__main__":
     main()

@@ -26,7 +26,7 @@ Here's a list of all available options:
 
     -o, --output: The output folder for the compressed files. If not specified, the script uses the input directory as the output directory.
     -l, --limit: The file size limit in GB. If a file is larger than this size, it will be compressed. Default is 8.0 GB.
-    -t, --target: The target file size in GB. The script attempts to compress files to this size. Default is 8.0 GB.
+    -v, --vb: The the variable bitrate for Handbreak.
     -p, --parallel: The number of parallel files to process. Default is 8.
     -c, --compressor: The compressor tool to use. Can be either 'handbrake' or 'ffmpeg'. Default is 'handbrake'.
     -b, --bitrate: The estimated bitrate for FFmpeg (e.g. 5000k). Default is '5000k'. This option is only used when FFmpeg is the chosen compressor.
