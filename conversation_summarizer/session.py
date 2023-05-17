@@ -1,11 +1,30 @@
 import time
 import uuid
 import logging
+from typing import List, Optional
 from message import Message
 from model_config import ModelConfig
 
 
 class Session:
+    """
+    A class representing a chat session with messages, user ID and model configuration.
+
+    Attributes:
+        user_id (str): The user ID associated with the session.
+        session_id (str): The unique identifier for the chat session.
+        name (str): The name of the chat session.
+        model_config (ModelConfig): The configuration of the model used in the chat.
+        created_at (float): Timestamp when the chat session was created.
+        last_updated (float): Timestamp when the chat session was last updated.
+        messages (List[Message]): A list of messages in the chat session.
+        full_message_history (List[Message]): A list of all messages including summaries.
+        summarizer: A function for summarizing the chat session.
+        summary (List[str]): A list of summary messages.
+        max_tokens (Optional[int]): Maximum number of tokens allowed in a chat session.
+        last_summary_index (int): Index of the last summary in the full message history.
+    """
+
     def __init__(self, user_id: str, **kwargs):
         self.user_id = user_id
         self.session_id = kwargs.get("session_id", str(uuid.uuid4()))
@@ -21,6 +40,12 @@ class Session:
         self.last_summary_index = kwargs.get("last_summary_index", 0)
 
     def add_message(self, message: Message):
+        """
+        Adds a message to the chat session and updates the last_updated timestamp.
+
+        Args:
+            message (Message): The message to add to the chat session.
+        """
         self.messages.append(message)
         self.full_message_history.append(message)
         self.last_updated = time.time()
@@ -30,7 +55,18 @@ class Session:
         if self.max_tokens is not None and total_tokens > self.max_tokens:
             self.summarize()
 
-    def get_messages(self, max_count=None, max_tokens=None, use_summary=True):
+    def get_messages(self, max_count: Optional[int] = None, max_tokens: Optional[int] = None, use_summary: bool = True) -> List[Message]:
+        """
+        Retrieves messages from the chat session, optionally using summary and limiting by count or tokens.
+
+        Args:
+            max_count (Optional[int], optional): Maximum number of messages to retrieve. Defaults to None.
+            max_tokens (Optional[int], optional): Maximum number of tokens to retrieve. Defaults to None.
+            use_summary (bool, optional): Whether to use the summary in the retrieved messages. Defaults to True.
+
+        Returns:
+            List[Message]: A list of messages that meet the given requirements.
+        """
         messages = self.messages[::-1]
 
         if use_summary:
@@ -56,12 +92,21 @@ class Session:
         return messages
 
     def summarize(self):
+        """
+        Summarizes the chat session and updates message lists and last_summary_index.
+        """
         new_summary, remaining_messages = self.summarizer(self.full_message_history, max_tokens=self.max_tokens)
         self.summary += new_summary
         self.messages = self.full_message_history[-len(remaining_messages):]
         self.last_summary_index = len(self.full_message_history) - len(remaining_messages)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
+        """
+        Converts the chat session object to a dictionary.
+
+        Returns:
+            dict: A dictionary representing the chat session.
+        """
         return {
             "user_id": self.user_id,
             "session_id": self.session_id,
